@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>درخواست شیرینی شیرین!</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Vazirmatn Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Lucide / Font Styling -->
+    <style>
+        * {
+            font-family: 'Vazirmatn', sans-serif;
+            user-select: none;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Shrinking animation & transitions */
+        .no-btn-transition {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+        }
+
+        /* Terminal styling */
+        .terminal-box {
+            background-color: #0d1117;
+            color: #39d353;
+            font-family: 'Courier New', Courier, monospace;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid #30363d;
+        }
+
+        .cursor-blink::after {
+            content: '▋';
+            animation: blink 0.8s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Sweet Card effects */
+        .sweet-card {
+            transition: all 0.3s ease;
+        }
+        .sweet-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Toast animation */
+        @keyframes slideIn {
+            from { transform: translateY(-100%) translateX(-50%); opacity: 0; }
+            to { transform: translateY(0) translateX(-50%); opacity: 1; }
+        }
+        .toast-animate {
+            animation: slideIn 0.3s ease forwards;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4 min-h-screen relative">
+
+    <!-- Toast Notification Container -->
+    <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 hidden max-w-sm w-full px-4">
+        <div id="toast-content" class="bg-red-500 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center justify-between text-sm md:text-base font-semibold">
+            <span id="toast-text">خطا!</span>
+            <i class="fa-solid fa-triangle-exclamation mr-2"></i>
+        </div>
+    </div>
+
+    <!-- Main Outer Container -->
+    <main class="w-full max-w-xl mx-auto">
+
+        <!-- STEP 1: Welcome Screen -->
+        <div id="step-1" class="glass-card rounded-3xl p-8 md:p-12 text-center transition-all duration-500">
+            <div class="w-24 h-24 bg-pink-100 text-pink-500 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl shadow-inner">
+                <i class="fa-solid fa-cake-candles animate-bounce"></i>
+            </div>
+            <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800 mb-4">به برنامه ما خوش آمدید! 🎉</h1>
+            <p class="text-gray-600 mb-8 leading-relaxed text-lg">برای ادامه و ثبت درخواست رسمی، لطفاً روی دکمه ورود کلیک کنید.</p>
+            <button onclick="goToStep(2)" class="w-full py-4 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg hover:shadow-pink-500/30 transition-all text-lg flex items-center justify-center gap-2">
+                <span>ورود به برنامه</span>
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+        </div>
+
+        <!-- STEP 2: The Prank Question -->
+        <div id="step-2" class="glass-card rounded-3xl p-8 md:p-12 text-center hidden transition-all duration-500 relative">
+            <div class="w-20 h-20 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
+                <i class="fa-solid fa-circle-question"></i>
+            </div>
+            <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-6 leading-snug">
+                آیا بابت موفقیت کسب شده شیرینی میدی یا نه؟ 🧁
+            </h2>
+
+            <div class="space-y-4 relative min-h-[200px] flex flex-col justify-center items-center" id="options-container">
+                <button onclick="goToStep(3)" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-2xl shadow-md transition-all text-base">
+                    بله
+                </button>
+                <button onclick="goToStep(3)" class="w-full py-3.5 bg-teal-500 hover:bg-teal-600 text-white font-bold rounded-2xl shadow-md transition-all text-base">
+                    چرا که نه حتما!
+                </button>
+                
+                <!-- Shrinking Prank Button -->
+                <button id="no-btn" onclick="handleNoClick()" class="no-btn-transition w-full py-3.5 bg-gray-200 text-gray-700 hover:bg-red-100 hover:text-red-600 font-bold rounded-2xl border border-gray-300">
+                    نه!
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 3: Sweet Selection -->
+        <div id="step-3" class="glass-card rounded-3xl p-6 md:p-10 text-center hidden transition-all duration-500">
+            <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-2">نوع شیرینی رو انتخاب کن 🥐</h2>
+            <p class="text-gray-500 text-sm mb-6">فقط گزینه‌های مجاز قابل قبول می‌باشند!</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <!-- 1. Cream pastry (Allowed) -->
+                <div onclick="selectSweet(1)" class="sweet-card border-2 border-pink-200 bg-white/70 p-4 rounded-2xl cursor-pointer hover:border-pink-500 flex flex-col items-center">
+                    <div class="text-4xl mb-2">🧁</div>
+                    <span class="font-bold text-gray-800">شیرینی خامه ای</span>
+                </div>
+
+                <!-- 2. Moist pastry -->
+                <div onclick="selectSweet(2)" class="sweet-card border border-gray-200 bg-white/70 p-4 rounded-2xl cursor-pointer hover:border-red-400 flex flex-col items-center">
+                    <div class="text-4xl mb-2">🍰</div>
+                    <span class="font-bold text-gray-800">شیرینی تر</span>
+                </div>
+
+                <!-- 3. Zabon pastry -->
+                <div onclick="selectSweet(3)" class="sweet-card border border-gray-200 bg-white/70 p-4 rounded-2xl cursor-pointer hover:border-red-400 flex flex-col items-center">
+                    <div class="text-4xl mb-2">🥠</div>
+                    <span class="font-bold text-gray-800">شیرینی زبون</span>
+                </div>
+
+                <!-- 4. All of the above -->
+                <div onclick="selectSweet(4)" class="sweet-card border border-gray-200 bg-white/70 p-4 rounded-2xl cursor-pointer hover:border-red-400 flex flex-col items-center">
+                    <div class="text-4xl mb-2">🎂</div>
+                    <span class="font-bold text-gray-800">همه موارد</span>
+                </div>
+            </div>
+
+            <!-- 5. None -->
+            <button onclick="selectSweet(5)" class="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold rounded-2xl border border-gray-300 text-sm">
+                هیچکدام!
+            </button>
+        </div>
+
+        <!-- STEP 4: Date Picker -->
+        <div id="step-4" class="glass-card rounded-3xl p-8 md:p-10 text-center hidden transition-all duration-500">
+            <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fa-regular fa-calendar-check"></i>
+            </div>
+            <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-2">روز تحویل شیرینی 📅</h2>
+            
+            <!-- Banner Notification -->
+            <div class="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-2xl mb-6 text-xs md:text-sm font-semibold flex items-center justify-center gap-2 shadow-sm">
+                <i class="fa-solid fa-circle-info text-amber-500 text-base"></i>
+                <span>لطفاً فقط یکی از روزهای ۷ روز آینده را انتخاب کنید!</span>
+            </div>
+
+            <p class="text-gray-500 text-sm mb-4">روز مورد نظرت رو از تقویم شمسی زیر انتخاب کن:</p>
+
+            <!-- Persian Jalali Days Grid (7 Days ahead) -->
+            <div id="jalali-days-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-6">
+                <!-- Days will be generated by JS -->
+            </div>
+
+            <button onclick="validateJalaliDate()" class="w-full py-3.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-2xl shadow-md transition-all text-base">
+                ثبت و مرحله بعدی
+            </button>
+        </div>
+
+        <!-- STEP 5: Final Confirmation Screen -->
+        <div id="step-5" class="glass-card rounded-3xl p-8 md:p-12 text-center hidden transition-all duration-500">
+            <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
+                <i class="fa-solid fa-heart"></i>
+            </div>
+            <h2 class="text-lg md:text-xl font-extrabold text-gray-800 mb-6 leading-relaxed">
+                ممنونم که بدون هیچ فشاری میخوای شیرینی بدی دمتم گرم! ❤️<br>
+                <span class="text-sm font-normal text-gray-500 block mt-2">ایشالله موفقیت های بعدی (با هر موفقیتت آپدیت میشم 😁)</span>
+            </h2>
+
+            <button onclick="goToStep(6)" class="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-2xl shadow-xl transition-all text-lg flex items-center justify-center gap-2">
+                <span>ارسال برای درخواست کننده</span>
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+
+        <!-- STEP 6: Terminal Screen with Sound Effect -->
+        <div id="step-6" class="terminal-box rounded-3xl p-6 md:p-8 hidden transition-all duration-500 text-right min-h-[350px] relative">
+            <!-- Window Top Bar -->
+            <div class="flex items-center gap-2 mb-6 pb-4 border-b border-gray-800 dir-ltr">
+                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                <span class="text-xs text-gray-500 font-mono ml-2">C:\System32\sweet_prank.exe</span>
+            </div>
+
+            <!-- Typed Content -->
+            <div id="terminal-text" class="text-sm md:text-base leading-relaxed whitespace-pre-line text-emerald-400 font-mono cursor-blink"></div>
+        </div>
+    </main>
+
+    <!-- JavaScript App Logic -->
+    <script>
+        // State Variables
+        let currentStep = 1;
+        let noScale = 1;
+        let isCompleted = false;
+        let selectedJalaliDay = null;
+
+        // Prevent Unload / Leaving
+        window.addEventListener('beforeunload', function (e) {
+            if (!isCompleted) {
+                e.preventDefault();
+                e.returnValue = 'شما مجاز به خروج تا اتمام فرایند نیستید!';
+            }
+        });
+
+        // Web Audio API Typing Sound Synthesizer
+        let audioCtx = null;
+
+        function playClickSound() {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400 + Math.random() * 300, audioCtx.currentTime);
+                
+                gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.04);
+            } catch (e) {
+                // Audio not supported or blocked
+            }
+        }
+
+        // Custom Toast Function
+        function showToast(message, type = 'error') {
+            const toast = document.getElementById('toast');
+            const toastContent = document.getElementById('toast-content');
+            const toastText = document.getElementById('toast-text');
+
+            toastText.textContent = message;
+            
+            if (type === 'success') {
+                toastContent.className = "bg-emerald-600 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center justify-between text-sm md:text-base font-semibold";
+            } else {
+                toastContent.className = "bg-rose-500 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center justify-between text-sm md:text-base font-semibold";
+            }
+
+            toast.classList.remove('hidden');
+            toast.classList.add('toast-animate');
+
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 2500);
+        }
+
+        // Navigation Switcher
+        function goToStep(step) {
+            document.getElementById(`step-${currentStep}`).classList.add('hidden');
+            currentStep = step;
+            const newElem = document.getElementById(`step-${currentStep}`);
+            newElem.classList.remove('hidden');
+
+            if (step === 4) {
+                generateJalali7Days();
+            }
+
+            if (step === 6) {
+                isCompleted = true;
+                startTerminalTyping();
+            }
+        }
+
+        // STEP 2: Shrinking "No" Button Prank
+        function handleNoClick() {
+            showToast("گزینه صحیح این نمیباشد ❌");
+            const noBtn = document.getElementById('no-btn');
+            
+            noScale -= 0.25;
+            
+            if (noScale <= 0.1) {
+                noBtn.style.opacity = '0';
+                noBtn.style.pointerEvents = 'none';
+                setTimeout(() => {
+                    noBtn.style.display = 'none';
+                }, 300);
+            } else {
+                noBtn.style.transform = `scale(${noScale})`;
+            }
+        }
+
+        // STEP 3: Sweet Choice Logic
+        function selectSweet(option) {
+            switch(option) {
+                case 1:
+                    showToast("دمت گرم! عالیه 🎉", 'success');
+                    setTimeout(() => {
+                        goToStep(4);
+                    }, 1200);
+                    break;
+                case 2:
+                case 3:
+                    showToast("چون من دوست ندارم نه!");
+                    break;
+                case 4:
+                    showToast("چون تو زحمت میوفتی نه! 😅");
+                    break;
+                case 5:
+                    showToast("زکی فکر کردی میتونی در بری؟ 😂");
+                    break;
+            }
+        }
+
+        // STEP 4: Jalali Persian Calendar Generation (Next 7 Days)
+        function generateJalali7Days() {
+            const grid = document.getElementById('jalali-days-grid');
+            grid.innerHTML = '';
+            selectedJalaliDay = null;
+
+            const daysOfWeek = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه'];
+
+            for (let i = 0; i < 7; i++) {
+                const date = new Date();
+                date.setDate(date.getDate() + i);
+
+                const dayName = daysOfWeek[date.getDay()];
+                const jalaliStr = new Intl.DateTimeFormat('fa-IR', {
+                    month: 'long',
+                    day: 'numeric'
+                }).format(date);
+
+                const isToday = i === 0;
+
+                const dayCard = document.createElement('div');
+                dayCard.className = `p-3 rounded-2xl border cursor-pointer transition-all flex flex-col items-center justify-center bg-white/80 hover:border-purple-500 hover:shadow-md jalali-card-${i}`;
+                dayCard.onclick = () => selectJalaliCard(i, dayCard, `${dayName} (${jalaliStr})`);
+
+                dayCard.innerHTML = `
+                    <span class="text-xs font-bold ${isToday ? 'text-purple-600' : 'text-gray-500'}">${isToday ? 'امروز (' + dayName + ')' : dayName}</span>
+                    <span class="text-sm font-black text-gray-800 mt-1">${jalaliStr}</span>
+                `;
+
+                grid.appendChild(dayCard);
+            }
+        }
+
+        function selectJalaliCard(index, cardElem, textVal) {
+            document.querySelectorAll('#jalali-days-grid > div').forEach(el => {
+                el.classList.remove('border-purple-600', 'bg-purple-50', 'ring-2', 'ring-purple-400');
+                el.classList.add('bg-white/80');
+            });
+
+            cardElem.classList.remove('bg-white/80');
+            cardElem.classList.add('border-purple-600', 'bg-purple-50', 'ring-2', 'ring-purple-400');
+            selectedJalaliDay = textVal;
+        }
+
+        function validateJalaliDate() {
+            if (!selectedJalaliDay) {
+                showToast("لطفاً حتماً یکی از ۷ روز مشخص شده را انتخاب کنید! ❌");
+                return;
+            }
+            goToStep(5);
+        }
+
+        // STEP 6: Typewriter Effect for Terminal
+        const finalMessage = `سلام 
+امیدوارم از شوخی نارحت نشده باشی ، قرار نیست شرینی بدی نترس 
+
+و میدونم که قراره در آینده موفقیت هایی به دست بیاری که تموم ماهایی که میشناسیمت رو سربلند میکنی 
+
+امیدوارم که روز به روز موفقیت هات ادامه پیدا کنن و به موفقیت های خیلیییییی بزرگی برسی 
+
+و بعد از اینکه به بزرگ ترین موفقیت از نظر خودت رسیدی 
+
+اون موقع ازت شام میگیرم البته اگر عمری باشه 😉
+
+سبز و مانا باشید ✨`;
+
+        function startTerminalTyping() {
+            const container = document.getElementById('terminal-text');
+            container.textContent = '';
+            let index = 0;
+
+            function typeChar() {
+                if (index < finalMessage.length) {
+                    container.textContent += finalMessage.charAt(index);
+                    playClickSound();
+                    index++;
+                    const delay = finalMessage.charAt(index) === '\n' ? 300 : Math.random() * 40 + 30;
+                    setTimeout(typeChar, delay);
+                } else {
+                    container.classList.remove('cursor-blink');
+                }
+            }
+
+            setTimeout(typeChar, 500);
+        }
+    </script>
+</body>
+</html>
